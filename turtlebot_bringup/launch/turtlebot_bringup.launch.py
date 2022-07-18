@@ -15,6 +15,7 @@ def generate_launch_description():
     kobuki_package = launch_ros.substitutions.FindPackageShare(package='kobuki_node').find('kobuki_node')
     urg_package = launch_ros.substitutions.FindPackageShare(package='urg_node').find('urg_node')
     turtlebot_description_package = launch_ros.substitutions.FindPackageShare(package='turtlebot_description').find('turtlebot_description')
+    slam_toolbox_package = launch_ros.substitutions.FindPackageShare(package='slam_toolbox').find('slam_toolbox')
 
     kobuki_node_launch = launch.actions.IncludeLaunchDescription(
         launch.launch_description_sources.PythonLaunchDescriptionSource(
@@ -54,10 +55,18 @@ def generate_launch_description():
         arguments=['-d',os.path.join(turtlebot_description_package,'rviz/urdf_config.rviz')]
     )
     
+    slam_toolbox_launch = launch.actions.IncludeLaunchDescription(
+        launch.launch_description_sources.PythonLaunchDescriptionSource(
+            os.path.join(
+                slam_toolbox_package,
+                'launch/online_async_launch.py')
+        )
+    )
     return launch.LaunchDescription([
         kobuki_node_launch,
         urg_node,
         robot_state_publisher_node,
         joint_state_publisher_node,
-        rviz_node
+        rviz_node,
+        slam_toolbox_launch
     ])
